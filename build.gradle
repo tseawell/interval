@@ -1,0 +1,93 @@
+plugins {
+    id 'java'
+}
+
+apply plugin: 'idea'
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+version '1.0.1'
+
+idea {
+    module {
+        outputDir file('build/classes/main')
+        testOutputDir file('build/classes/test')
+    }
+}
+
+//compileJava.options.compilerArgs << "-Xlint:unchecked"
+compileJava.options.compilerArgs << "-Xlint:deprecation"
+compileJava.options.encoding = 'UTF-8'
+
+compileTestJava {
+    sourceCompatibility = "1.8"
+    targetCompatibility = "1.8"
+}
+
+repositories {
+    mavenCentral()
+    maven { url "https://mvnrepository.com/artifact/" }
+//    mavenLocal()
+//    maven{ url "C:\\maven\\repository" }
+
+}
+
+dependencies {
+
+    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.0.+'
+    testCompile group: 'org.testng', name: 'testng', version: '6.9.+'
+}
+
+sourceSets {
+    test {
+        java {
+            srcDir 'src/test/java'
+        }
+        resources {
+            srcDir 'src/test/java'
+            exclude '**/*.java'
+            output.resourcesDir = "build/classes/test"
+        }
+    }
+}
+
+test {
+//    outputs.upToDateWhen {false}
+    useTestNG()
+    testLogging {
+        showStandardStreams = true
+//        events = ["started", "passed", "skipped", "failed"]
+        events = ["skipped", "failed"]
+    }
+    return true
+}
+
+publishing {
+    repositories {
+        maven {
+            url "C:\\maven\\repository"
+        }
+    }
+    publications {
+        mavenJava(MavenPublication) {
+            groupId 'com.seawell.interval'
+            artifactId 'seawell-interval'
+
+            from components.java
+        }
+    }
+}
+
+
+publishToMavenLocal {}.dependsOn test
+group 'com.seawell.interval'
+version '1.0.1'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
